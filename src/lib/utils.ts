@@ -16,3 +16,13 @@ export function getAccount(id: string) {
   if (category[0]) return category[0];
   return null;
 }
+
+export function formatTime(time: string) {
+  const date = new Date(time);
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  }).format(date);
+  return formatted;
+}

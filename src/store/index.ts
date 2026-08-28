@@ -10,7 +10,7 @@ type Action = {
   updateFirstName: (firstName: State["firstName"]) => void;
   updateLastName: (lastName: State["lastName"]) => void;
 };
-interface RecordTypeUpadate {
+export interface RecordTypeUpadate {
   updateRecord: (data: RecordType) => void;
 }
 

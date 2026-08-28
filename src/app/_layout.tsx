@@ -12,7 +12,9 @@ export default function RootLayout() {
     <SafeAreaView className="flex-1">
       <Suspense fallback={<Text>..Loading</Text>}>
         <SQLiteProvider databaseName="main" useSuspense>
+
           <Stack screenOptions={{ headerShown: false }} />
+
           <PortalHost />
         </SQLiteProvider>
       </Suspense>

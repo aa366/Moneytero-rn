@@ -2,14 +2,13 @@ import currency from '@/lib/currency';
 import { getAccount } from '@/lib/utils';
 import { useRecord } from '@/store';
 import { RecordType } from '@/types';
-import { Link, Redirect } from 'expo-router';
+import { Link } from 'expo-router';
 import { MoveRight, Pen, RefreshCw, Trash, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import LucideIcon from './LucideIcon';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTrigger } from './ui/alert-dialog';
 import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 
 interface Props {
     data: RecordType;
@@ -28,6 +27,7 @@ export default function Record({
         note
     } = data
     const [isDialogOpen, setIsDialogopen] = useState(false)
+    const [isDeleteOpen, setIsDeleteopen] = useState(false)
     let uniqueColor = {
         text: "text-blue-500",
         bg: "bg-blue-300"
@@ -67,17 +67,14 @@ export default function Record({
 
     function handlePen() {
 
-        // record.updateRecord({ id, from, to, amount, time, note })
-        // console.log(record);
-        record.updateRecord({ ...data })
-        console.log(record);
 
+        record.updateRecord({ ...data })
         setIsDialogopen(false)
     }
     function handleDelete() {
-        console.log("deleted");
+
         setIsDialogopen(false)
-        return <Redirect href={"/Records"} />
+        setIsDeleteopen(false)
 
     }
     return (
@@ -179,23 +176,28 @@ export default function Record({
                             >
                                 <Pen size={32} />
                             </Link>
-                            <Dialog>
-                                <DialogTrigger>
+                            <AlertDialog open={isDeleteOpen}>
+                                <AlertDialogTrigger onPress={() => setIsDeleteopen(true)}>
 
                                     <Trash size={32} />
-                                </DialogTrigger>
-                                <DialogContent className='bg-white' >
+                                </AlertDialogTrigger>
+                                <AlertDialogContent className='bg-white' >
                                     <Text>are you sure want to delete it ?</Text>
-                                    <View>
+                                    <View className='flex flex-row justify-evenly w-full'>
 
-                                        <Button variant={"destructive"} onPress={handleDelete}>
+                                        <Button variant={"outline"} onPress={() => setIsDeleteopen(false)} className='w-1/3'>
+                                            <Text>
+                                                Cancel
+                                            </Text>
+                                        </Button>
+                                        <Button variant={"destructive"} onPress={handleDelete} className=' w-1/3'>
                                             <Text>
                                                 Sure
                                             </Text>
                                         </Button>
                                     </View>
-                                </DialogContent>
-                            </Dialog>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </View>
 
                         <X size={32} onPress={() => setIsDialogopen(false)} />

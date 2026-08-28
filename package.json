@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
-    "@expo/ui": "~57.0.13",
+    "@expo/ui": "~57.0.14",
     "@rn-primitives/alert-dialog": "^1.5.2",
     "@rn-primitives/dialog": "^1.5.2",
     "@rn-primitives/portal": "^1.5.3",
