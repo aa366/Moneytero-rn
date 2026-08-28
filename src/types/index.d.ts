@@ -9,20 +9,13 @@ export interface RecordType {
     name: string;
     id: string;
   };
-  time: timestamptz;
+  time: string;
   note?: string;
 }
 export interface AccountType {
+  type: "account" | "category";
   id: string;
-  icon?: string;
-  name: string;
-  initValue: number;
-  balance: number;
-  records: RecordType[];
-}
-export interface CategoryType {
-  id: string;
-  icon?: string;
+  icon: NAME;
   name: string;
   initValue: number;
   balance: number;

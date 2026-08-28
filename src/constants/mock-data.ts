@@ -1,4 +1,4 @@
-import { AccountType, CategoryType, RecordType } from "@/types";
+import { AccountType, RecordType } from "@/types";
 
 export const mockRecords: RecordType[] = [
   {
@@ -61,24 +61,27 @@ export const mockRecords: RecordType[] = [
 
 export const mockAccounts: AccountType[] = [
   {
+    type: "account",
     id: "acc_checking_01",
-    icon: "bank",
+    icon: "Banknote",
     name: "Main Checking",
     initValue: 1000.0,
     balance: 3579.5, // 1000 (init) + 3200 (salary) - 120.50 (groceries) - 500 (savings)
     records: [mockRecords[0], mockRecords[1], mockRecords[3]],
   },
   {
+    type: "account",
     id: "acc_savings_01",
-    icon: "piggy-bank",
+    icon: "PiggyBank",
     name: "High-Yield Savings",
     initValue: 12500.0,
     balance: 13000.0, // 12500 (init) + 500 (transfer)
     records: [mockRecords[3]],
   },
   {
+    type: "account",
     id: "acc_credit_01",
-    icon: "credit-card",
+    icon: "CreditCard",
     name: "Sapphire Credit Card",
     initValue: 0.0,
     balance: -14.99,
@@ -86,26 +89,29 @@ export const mockAccounts: AccountType[] = [
   },
 ];
 
-export const mockCategories: CategoryType[] = [
+export const mockCategories: AccountType[] = [
   {
+    type: "category",
     id: "cat_income_salary",
-    icon: "briefcase",
+    icon: "Briefcase",
     name: "Salary & Wages",
     initValue: 0.0,
     balance: 3200.0,
     records: [mockRecords[0]],
   },
   {
+    type: "category",
     id: "cat_groceries",
-    icon: "shopping-cart",
+    icon: "ShoppingCart",
     name: "Groceries",
     initValue: 0.0,
     balance: 120.5,
     records: [mockRecords[1]],
   },
   {
+    type: "category",
     id: "cat_entertainment",
-    icon: "tv",
+    icon: "Tv",
     name: "Entertainment & Subs",
     initValue: 0.0,
     balance: 14.99,
