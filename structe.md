@@ -1,0 +1,5 @@
+- sql inttgration for saving
+- add accounts
+- add categories
+- add records
+- anaylsis data
