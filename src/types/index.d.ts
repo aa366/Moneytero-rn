@@ -9,7 +9,7 @@ export interface RecordType {
     name: string;
     id: string;
   };
-  time: string;
+  time: number | string;
   note?: string;
 }
 export interface AccountType {

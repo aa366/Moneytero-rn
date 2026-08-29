@@ -29,15 +29,15 @@ function Items({ data }: { data: RecordType[][] }) {
             </View>
         )
     }
-    return data.map((element) => (
+    return data.map((element, index) => (
 
-        <View>
+        <View key={index + "element-id"}>
             <View className='mt-4 '>
                 <Text className='ml-[5%] text-lg font-bold capitalize'>Header</Text>
                 <Separator className='h-1 w-[90%] mx-auto' />
             </View>
             {element.map((item) => (
-                <View key={item.time + "key-unique-group-by-time"}>
+                <View key={item.id + "key-unique-group-by-time"}>
                     <Record data={item} />
                     {!(item.id === element.at(-1)?.id) && <Separator className='my-1' />}
                 </View>

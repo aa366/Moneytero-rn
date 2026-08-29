@@ -1,6 +1,6 @@
 import currency from '@/lib/currency';
 import { getAccount } from '@/lib/utils';
-import { useRecord } from '@/store';
+import { useRecord } from '@/store/record.store';
 import { RecordType } from '@/types';
 import { Link } from 'expo-router';
 import { MoveRight, Pen, RefreshCw, Trash, X } from 'lucide-react-native';
@@ -10,22 +10,10 @@ import LucideIcon from './LucideIcon';
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTrigger } from './ui/alert-dialog';
 import { Button } from './ui/button';
 
-interface Props {
-    data: RecordType;
-
-}
-
 export default function Record({
     data
-}: Props) {
-    const {
-        id,
-        to,
-        from,
-        amount,
-        time,
-        note
-    } = data
+}: { data: RecordType; }) {
+    const { id, to, from, amount, time, note } = data
     const [isDialogOpen, setIsDialogopen] = useState(false)
     const [isDeleteOpen, setIsDeleteopen] = useState(false)
     let uniqueColor = {
@@ -66,21 +54,26 @@ export default function Record({
 
 
     function handlePen() {
-
-
-        record.updateRecord({ ...data })
+        record.updateCurrent({ ...data })
         setIsDialogopen(false)
     }
-    function handleDelete() {
 
+    function handleDelete() {
+        record.removeRecord(id)
         setIsDialogopen(false)
         setIsDeleteopen(false)
 
     }
+
     return (
 
-        <AlertDialog open={isDialogOpen} onPointerCancel={() => setIsDialogopen(false)}>
-            <AlertDialogTrigger className=' flex flex-row gap-2 items-center justify-between mx-2 p-2 bg-gray-200' onPress={() => setIsDialogopen(true)}>
+        <AlertDialog
+            open={isDialogOpen}
+            onPointerCancel={() => setIsDialogopen(false)}>
+            {/* Trigger */}
+            <AlertDialogTrigger
+                className=' flex flex-row gap-2 items-center justify-between mx-2 p-2 bg-gray-200'
+                onPress={() => setIsDialogopen(true)}>
                 {transactionType === "Category" ?
                     (
                         <>
@@ -162,13 +155,16 @@ export default function Record({
 
             </AlertDialogTrigger>
             {/* Content */}
-
             <AlertDialogContent className='rounded-lg border border-white bg-gray-100 p-3 w-full'  >
 
-                <AlertDialogHeader className={` flex items-center  ${uniqueColor.bg} p-5 rounded-xl`}>
-                    {/* head */}
+                {/* Head (Colored) */}
+                <AlertDialogHeader
+                    className={` flex items-center  ${uniqueColor.bg} p-5 rounded-xl`}>
+
                     <View className='flex flex-row justify-between  w-full'>
+                        {/* left Group */}
                         <View className='flex flex-row gap-5'>
+                            {/* Pen */}
                             <Link
                                 href={"/Edit"}
                                 className='bg-blue-400 p-1 '
@@ -176,6 +172,7 @@ export default function Record({
                             >
                                 <Pen size={32} />
                             </Link>
+                            {/* Delete */}
                             <AlertDialog open={isDeleteOpen}>
                                 <AlertDialogTrigger onPress={() => setIsDeleteopen(true)}>
 
@@ -199,11 +196,12 @@ export default function Record({
                                 </AlertDialogContent>
                             </AlertDialog>
                         </View>
-
+                        {/* Cancel X  */}
                         <X size={32} onPress={() => setIsDialogopen(false)} />
                     </View>
-                    {/* texts */}
-                    <Text className='text-2xl capitalize font-extrabold text-black'>
+                    {/* texts data*/}
+                    <Text
+                        className='text-2xl capitalize font-extrabold text-black'>
                         {transactionType === "Category" ? (
                             isIncome ? "Income" : "Expense"
                         ) : transactionType}
@@ -292,7 +290,7 @@ export default function Record({
 
 
                 </View>
-
+                {/* Note */}
                 <ScrollView className='text-center text-gray-600 '>
                     <Text className='max-h-[200px]'>
                         {note ?? "No notes"}
@@ -301,9 +299,6 @@ export default function Record({
                 </ScrollView>
 
             </AlertDialogContent>
-
-
-
         </AlertDialog>
     )
 }
