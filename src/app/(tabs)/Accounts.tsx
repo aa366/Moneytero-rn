@@ -1,4 +1,4 @@
-import AccountCard from '@/components/AccountCard'
+import AccountCard from '@/screen/accounts/AccountCard'
 import AddAccount from '@/screen/accounts/AddAccount'
 import Overall from '@/screen/analysis/Overall'
 import { useAccountStore } from '@/store/account.store'

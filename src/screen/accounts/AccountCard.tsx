@@ -5,9 +5,9 @@ import { useRouter } from 'expo-router';
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, Pressable, Text, View } from 'react-native';
-import LucideIcon from './LucideIcon';
-import { Card } from './ui/card';
-import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from './ui/menubar';
+import LucideIcon from '../../components/LucideIcon';
+import { Card } from '../../components/ui/card';
+import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from '../../components/ui/menubar';
 
 export default function AccountCard({ data }: {
     data: AccountType

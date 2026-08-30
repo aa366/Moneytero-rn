@@ -1,6 +1,54 @@
 import { mockRecords } from "@/constants/mock-data";
+import { useAccountStore } from "@/store/account.store";
+import { useCategoryStore } from "@/store/category.store";
 import { RecordType } from "@/types";
 import { create } from "zustand";
+
+const syncBalancesFromRecords = () => {
+  const accounts = useAccountStore.getState().accounts.map((account) => ({
+    ...account,
+    balance: account.initValue,
+  }));
+  const categories = useCategoryStore.getState().categories.map((category) => ({
+    ...category,
+    balance: category.initValue,
+  }));
+
+  const records = useRecord.getState().records;
+
+  for (const record of records) {
+    const amount = Number(record.amount || 0);
+
+    const fromAccount = accounts.find(
+      (account) => account.id === record.from?.id,
+    );
+    if (fromAccount) {
+      fromAccount.balance -= amount;
+    }
+
+    const toAccount = accounts.find((account) => account.id === record.to?.id);
+    if (toAccount) {
+      toAccount.balance += amount;
+    }
+
+    const fromCategory = categories.find(
+      (category) => category.id === record.from?.id,
+    );
+    if (fromCategory) {
+      fromCategory.balance += amount;
+    }
+
+    const toCategory = categories.find(
+      (category) => category.id === record.to?.id,
+    );
+    if (toCategory) {
+      toCategory.balance -= amount;
+    }
+  }
+
+  useAccountStore.setState({ accounts });
+  useCategoryStore.setState({ categories });
+};
 
 export const EMPTY_RECORD: RecordType = {
   id: "",
@@ -46,12 +94,18 @@ export const useRecord = create<StoreType>()((set) => ({
   current: EMPTY_RECORD,
   updateCurrent: (data) =>
     set((state) => ({
-      current: normalizeRecord({ ...state.current, ...data, from: { ...state.current.from, ...data.from }, to: { ...state.current.to, ...data.to } }),
+      current: normalizeRecord({
+        ...state.current,
+        ...data,
+        from: { ...state.current.from, ...data.from },
+        to: { ...state.current.to, ...data.to },
+      }),
     })),
   addRecord: (data) =>
     set((state) => {
       const newRecord = normalizeRecord(data);
       const newRecords = [...state.records, newRecord];
+      queueMicrotask(() => syncBalancesFromRecords());
       return { records: newRecords };
     }),
   updateRecord: (data) =>
@@ -60,11 +114,13 @@ export const useRecord = create<StoreType>()((set) => ({
       const newRecords = state.records.map((record) =>
         record.id === normalized.id ? { ...normalized } : record,
       );
+      queueMicrotask(() => syncBalancesFromRecords());
       return { records: newRecords };
     }),
   removeRecord: (id) =>
     set((state) => {
       const newRecords = state.records.filter((data) => data.id != id);
+      queueMicrotask(() => syncBalancesFromRecords());
       return { records: newRecords };
     }),
 }));
