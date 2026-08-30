@@ -1,4 +1,5 @@
 import currency from '@/lib/currency';
+import { useAccountStore } from '@/store/account.store';
 import { AccountType } from '@/types';
 import { useRouter } from 'expo-router';
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react-native';
@@ -11,11 +12,14 @@ import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, Me
 export default function AccountCard({ data }: {
     data: AccountType
 }) {
+    const accountStore = useAccountStore()
     const router = useRouter()
     const [menuValue, setMenuValue] = useState<string | undefined>(undefined)
     const isPositive = data.balance >= 0
 
     function handleOpen() {
+        console.log(new Date(Number(data.id)));
+
         router.push({
             pathname: '/ShowAccount',
             params: { id: data.id },
@@ -23,11 +27,13 @@ export default function AccountCard({ data }: {
     }
 
     function handleEdit() {
+
         Alert.alert('Edit account', `Editing ${data.name}`)
     }
 
     function handleDelete() {
-        Alert.alert('Delete account', `Delete ${data.name}?`)
+
+        accountStore.removeAccount(data.id)
     }
 
     return (

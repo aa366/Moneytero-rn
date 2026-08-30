@@ -72,7 +72,7 @@ export default function Record({
             onPointerCancel={() => setIsDialogopen(false)}>
             {/* Trigger */}
             <AlertDialogTrigger
-                className=' flex flex-row gap-2 items-center justify-between mx-2 p-2 bg-gray-200'
+                className=' flex flex-row gap-2 items-center justify-between mx-2 p-2 bg-gray-200 border rounded-lg '
                 onPress={() => setIsDialogopen(true)}>
                 {transactionType === "Category" ?
                     (

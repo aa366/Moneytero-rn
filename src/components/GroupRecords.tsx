@@ -1,3 +1,4 @@
+import { cn, formatDate } from '@/lib/utils';
 import { RecordType } from '@/types';
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
@@ -7,17 +8,18 @@ import { Separator } from './ui/separator';
 interface Props {
     data: RecordType[];
     children?: React.ReactNode;
+    className?: string;
 }
 
 function NoTransaction() {
-    console.log("components")
-    return (
-        <View className=' absolute right-1/2 top-1/2 translate-x-1/2 -translate-y-1/2  '>
-            <Text className='font-bold text-lg text-black'>
 
-                No Transaction
-            </Text>
-        </View>
+    return (
+        <Text
+            className='font-bold text-lg text-black text-center mt-4'>
+
+            No Transaction
+        </Text>
+
     )
 }
 
@@ -29,28 +31,33 @@ function Items({ data }: { data: RecordType[][] }) {
             </View>
         )
     }
-    return data.map((element, index) => (
 
-        <View key={index + "element-id"}>
-            <View className='mt-4 '>
-                <Text className='ml-[5%] text-lg font-bold capitalize'>Header</Text>
-                <Separator className='h-1 w-[90%] mx-auto' />
-            </View>
-            {element.map((item) => (
-                <View key={item.id + "key-unique-group-by-time"}>
-                    <Record data={item} />
-                    {!(item.id === element.at(-1)?.id) && <Separator className='my-1' />}
+    return data.map((element, index) => {
+        const date = new Date(element[0].time)
+        const forrmated = formatDate(date)
+        return (
+
+            <View key={index + "element-id"}>
+                <View className=' mt-4 mb-4 '>
+                    <Text className='ml-[5%] text-lg font-bold capitalize'>{forrmated ? forrmated : "Header"}</Text>
+                    <Separator className='h-1 w-[90%] mx-auto ' />
                 </View>
-            ))}
+                {element.map((item) => (
+                    <View key={item.id + "key-unique-group-by-time"}>
+                        <Record data={item} />
+                        {!(item.id === element.at(-1)?.id) && <Separator className='my-1' />}
+                    </View>
+                ))}
 
 
-        </View>
+            </View>
 
 
-    ))
+        )
+    })
 }
 
-export default function GroupRecords({ data, children }: Props) {
+export default function GroupRecords({ data, className, children }: Props) {
 
 
     const groupedByTime = data.reduce((acc, item) => {
@@ -66,7 +73,7 @@ export default function GroupRecords({ data, children }: Props) {
 
 
     return (
-        <ScrollView className={`  relative max-h-[60%] min-h-[400px] ${!sortedData.length && "bg-gray-300 rounded-md"}`}>
+        <ScrollView className={cn(`  relative max-h-[60%] min-h-[400px] ${!sortedData.length && "bg-gray-300 rounded-md"}`, className)}>
             {sortedData.length ? (
                 <Items data={sortedData} />
             ) : (
