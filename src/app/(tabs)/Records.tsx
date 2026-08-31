@@ -1,16 +1,22 @@
 import FloatingButton from '@/components/FloatingButton';
 import GroupRecords from '@/components/GroupRecords';
+import RangeSelect from '@/components/layout/RangeSelect';
+import TopBar from '@/components/layout/TopBar';
 import { useRecord } from '@/store/record.store';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 export default function Records() {
     const records = useRecord()
     return (
-        <View className='relative min-h-full flex flex-col justify-between' >
-            <Text className="text-red-500">Edit src/app/index.tsx to edit this screen.</Text>
+        <View className='relative h-[96vh] flex flex-col bg-slate-100' >
+            <View className='h-[25vh]'>
 
-            <GroupRecords data={records.records} />
-            <FloatingButton className=' absolute bottom-5 right-5 size-14' />
+                <TopBar />
+                <RangeSelect />
+            </View>
+
+            <GroupRecords data={records.records} className='  ' />
+            <FloatingButton className=' absolute bottom-10 right-5 size-14' />
 
         </View>
     );

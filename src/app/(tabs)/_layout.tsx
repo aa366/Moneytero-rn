@@ -16,6 +16,7 @@ export default function Layout() {
 
             }
         }} >
+
             <Tabs.Screen name='Records'
                 options={{
                     tabBarIcon: ({ color }) => <Archive size={32} color={color} />

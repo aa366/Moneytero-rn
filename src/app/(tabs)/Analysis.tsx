@@ -1,9 +1,10 @@
-import { Text, View } from 'react-native'
+import TopBar from '@/components/layout/TopBar'
+import { View } from 'react-native'
 
 export default function Analysis() {
     return (
         <View>
-            <Text>Analysis</Text>
+            <TopBar />
         </View>
     )
 }
