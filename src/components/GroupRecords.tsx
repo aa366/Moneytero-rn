@@ -1,4 +1,5 @@
-import { cn, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib';
+import { cn } from '@/lib/utils';
 import { RecordType } from '@/types';
 import React from 'react';
 import { ScrollView, Text, View } from 'react-native';
@@ -24,13 +25,6 @@ function NoTransaction() {
 }
 
 function Items({ data }: { data: RecordType[][] }) {
-    if (!data) {
-        return (
-            <View>
-                <Text>Nothing Here</Text>
-            </View>
-        )
-    }
 
     return data.map((element, index) => {
         const date = new Date(element[0].time)

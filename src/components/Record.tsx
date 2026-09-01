@@ -1,5 +1,5 @@
+import { getAccount } from '@/lib';
 import currency from '@/lib/currency';
-import { getAccount } from '@/lib/utils';
 import { useRecord } from '@/store/record.store';
 import { RecordType } from '@/types';
 import { Link } from 'expo-router';

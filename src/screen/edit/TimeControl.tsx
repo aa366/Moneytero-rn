@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
-import { formatDate, formatTime } from '@/lib/utils'
+import { formatDate, formatTime } from '@/lib'
+
 import { useRecord } from '@/store/record.store'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { useState } from 'react'
@@ -26,6 +27,7 @@ export default function TimeControl() {
             })
         }
     }
+
 
     return (
         <View className='flex flex-row  justify-between relative '>

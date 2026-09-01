@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/select';
 import { Text } from '@/components/ui/text';
 import { mockAccounts, mockCategories } from '@/constants/mock-data';
+import { getAccount } from '@/lib';
 import { useRecord } from '@/store/record.store';
 import { AccountType } from '@/types';
 import { useState } from 'react';
@@ -84,16 +85,13 @@ function MySelect({
 }
 export default function EditSelect({
     editType,
-    fromAccount,
-    toAccount
 }: {
     editType: "transfer" | "income" | "expense";
-    fromAccount: AccountType | null;
-    toAccount: AccountType | null;
 }) {
-
-    const fromSelect = fromAccount ?? undefined;
-    const toSelect = toAccount ?? undefined;
+    const recordStore = useRecord()
+    const fromSelect = getAccount(
+        recordStore.current.from.id) ?? undefined;
+    const toSelect = getAccount(recordStore.current.to.id) ?? undefined;
 
 
     return (
