@@ -1,6 +1,7 @@
 export interface RecordType {
   id: string;
   amount: number;
+  type: "income" | "expense" | "transfer";
   from: {
     name: string;
     id: string;

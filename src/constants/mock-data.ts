@@ -4,6 +4,7 @@ export const mockRecords: RecordType[] = [
   {
     id: "rec_001",
     amount: 3200,
+    type: "income",
     from: {
       id: "cat_income_salary",
       name: "Tech Corp Inc.",
@@ -18,6 +19,7 @@ export const mockRecords: RecordType[] = [
   {
     id: "rec_002",
     amount: 120.5,
+    type: "expense",
     from: {
       id: "acc_checking_01",
       name: "Main Checking",
@@ -32,6 +34,7 @@ export const mockRecords: RecordType[] = [
   {
     id: "rec_003",
     amount: 14.99,
+    type: "expense",
     from: {
       id: "acc_credit_01",
       name: "Sapphire Credit Card",
@@ -46,6 +49,7 @@ export const mockRecords: RecordType[] = [
   {
     id: "rec_004",
     amount: 500,
+    type: "transfer",
     from: {
       id: "acc_checking_01",
       name: "Main Checking",

@@ -53,6 +53,7 @@ const syncBalancesFromRecords = () => {
 export const EMPTY_RECORD: RecordType = {
   id: "",
   amount: 0,
+  type: "income",
   from: {
     name: "",
     id: "",
@@ -68,6 +69,7 @@ export const EMPTY_RECORD: RecordType = {
 export const normalizeRecord = (data?: Partial<RecordType>): RecordType => ({
   id: data?.id ?? "",
   amount: Number(data?.amount ?? 0),
+  type: data?.type ?? "income",
   from: {
     name: data?.from?.name ?? "",
     id: data?.from?.id ?? "",
