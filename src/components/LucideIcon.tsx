@@ -1,16 +1,21 @@
 import { LucideProps } from 'lucide-react-native';
 import * as icons from "lucide-react-native/icons";
 
-export type NAME = keyof typeof icons;
+export type IconName = keyof typeof icons;
 
 export interface IconProps extends Omit<LucideProps, "name"> {
-    name: NAME;
+    name: IconName | string;
 }
 
-export default function LucideIcon({ name, ...props }: IconProps) {
-    const Icon = icons[name];
+const isIconName = (name: string): name is IconName => { return Object.prototype.hasOwnProperty.call(icons, name); }
 
-    return <Icon {...props} />
+export default function LucideIcon({ name, ...props }: IconProps) {
+    if (!isIconName(name)) {
+        return null;
+    }
+
+    const Icon = icons[name];
+    return <Icon {...props} />;
 }
 
 

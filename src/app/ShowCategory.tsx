@@ -1,8 +1,8 @@
-import GroupRecords from '@/components/GroupRecords';
 import LucideIcon from '@/components/LucideIcon';
 import { Button } from '@/components/ui/button';
+import { mockAccounts } from '@/constants/mock-data';
 import currency from '@/lib/currency';
-import { useCategoryStore } from '@/store/category.store';
+
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { ScrollView, Text, View } from 'react-native';
@@ -11,9 +11,9 @@ export default function ShowCategory() {
     const router = useRouter();
     const { id } = useLocalSearchParams<{ id?: string | string[] }>();
     const categoryId = Array.isArray(id) ? id[0] : id;
-    const categoryStore = useCategoryStore();
+
     const category =
-        categoryStore.categories.find((item) => item.id === categoryId) ?? categoryStore.categories[0];
+        mockAccounts.find((item) => item.id === categoryId) ?? mockAccounts[0];
 
     return (
         <ScrollView className='flex-1 bg-slate-100 p-2'>
@@ -45,7 +45,7 @@ export default function ShowCategory() {
                 <View>
                     <View className='flex flex-row items-center'>
                         <Text className='text-xs text-slate-500'>Transactions </Text>
-                        <Text className='text-lg font-semibold text-slate-700'>{category.records.length}</Text>
+                        {/* <Text className='text-lg font-semibold text-slate-700'>{category.records.length}</Text> */}
                     </View>
 
                     <View className='flex flex-row items-center'>
@@ -61,7 +61,7 @@ export default function ShowCategory() {
 
             <View className='mt-6'>
                 <Text className='mb-3 text-xl font-bold text-slate-800'>Recent transactions</Text>
-                <GroupRecords data={category.records} />
+                {/* <GroupRecords data={category.records} /> */}
             </View>
         </ScrollView>
     );

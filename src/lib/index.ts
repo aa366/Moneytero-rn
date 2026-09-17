@@ -1,37 +1,14 @@
-import { EditType } from "@/app/Edit";
-import { useAccountStore } from "@/store/account.store";
-import { useCategoryStore } from "@/store/category.store";
-import { useRecord } from "@/store/record.store";
-import { AccountType } from "@/types";
-
-const recordStore = useRecord();
-const accountStore = useAccountStore();
-const CategoriesStore = useCategoryStore();
-
-export function checkTransactionType(
-  fromAccount: AccountType,
-  toAccount: AccountType,
-): EditType {
-  if (fromAccount.type === "category") {
-    return "income";
-  } else if (toAccount.type === "category") {
-    return "expense";
-  }
-  return "transfer";
-}
+import { mockAccounts } from "@/constants/mock-data";
 
 export function getAccount(id: string) {
-  const account = accountStore.accounts.find((item) => item.id === id);
-
-  if (account) return account;
-
-  const category = CategoriesStore.categories.find((item) => item.id === id);
-  if (category) return category;
-
-  return null;
+  const account = mockAccounts.find((item) => item.id === id);
+  return account ?? null;
 }
 
-export function formatDate(date: Date) {
+export function formatDate(date: Date | number) {
+  if (typeof date === "number") {
+    date = new Date(date);
+  }
   const formatted = new Intl.DateTimeFormat("en-GB", {
     year: "numeric",
     month: "2-digit",
@@ -39,7 +16,10 @@ export function formatDate(date: Date) {
   }).format(date);
   return formatted;
 }
-export function formatTime(date: Date) {
+export function formatTime(date: Date | number) {
+  if (typeof date === "number") {
+    date = new Date(date);
+  }
   const formatted = new Intl.DateTimeFormat("en-GB", {
     hour: "2-digit",
     minute: "2-digit",

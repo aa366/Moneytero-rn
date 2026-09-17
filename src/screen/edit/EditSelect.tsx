@@ -7,18 +7,19 @@ import {
     SelectValue
 } from '@/components/ui/select';
 import { Text } from '@/components/ui/text';
-import { mockAccounts, mockCategories } from '@/constants/mock-data';
+import { mockAccounts } from '@/constants/mock-data';
 import { getAccount } from '@/lib';
-import { useRecord } from '@/store/record.store';
-import { AccountType } from '@/types';
-import { useState } from 'react';
+import { AccountType, RecordType } from '@/types';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { View } from 'react-native';
 
 interface Props {
     title: string;
     items: AccountType[];
     defaultValue?: AccountType;
-    field: "from" | "to";
+    field: "fromId" | "toId";
+    record: RecordType;
+    setRecord: Dispatch<SetStateAction<RecordType>>;
 }
 
 function MySelect({
@@ -26,36 +27,29 @@ function MySelect({
     items = mockAccounts,
     defaultValue,
     field,
+    record,
+    setRecord
 }: Props) {
-    const record = useRecord()
-    const [item, setItem] =
-        useState<AccountType | undefined>();
+    const [item, setItem] = useState<AccountType | undefined>();
     const selectedValue = item ?? defaultValue;
 
-    function handleValueChange(option: {
-        value: string;
-        label: string;
-    } | undefined
-    ) {
+    function handleValueChange(option: { value: string; label: string; } | undefined) {
         const selectedItem = items.find((item) => item.id === option?.value);
         if (!selectedItem) return;
 
         setItem(selectedItem)
-        record.updateCurrent({
-            ...record.current,
-            [field]: {
-                id: selectedItem.id,
-                name: selectedItem.name,
-            },
-        })
+        setRecord((current) => ({
+            ...current,
+            [field]: selectedItem.id,
+        }))
     }
 
     return (
         <Select
-            value={selectedValue && {
+            value={selectedValue ? {
                 value: selectedValue.id,
                 label: selectedValue.name
-            }}
+            } : undefined}
             onValueChange={handleValueChange}
         >
             <SelectTrigger className='w-[180px]'>
@@ -63,48 +57,44 @@ function MySelect({
             </SelectTrigger>
 
             <SelectContent className='w-[180px]'>
-
-                <SelectLabel>
-                    {title}
-                </SelectLabel>
-                {
-                    items.map((item, i) => (
-                        <SelectItem
-                            label={item.name.slice(0, 15)}
-                            value={item.id}
-                            key={item.id + i + "select-key"}>
-                            {item.name}
-                        </SelectItem>
-
-                    ))
-                }
-
+                <SelectLabel>{title}</SelectLabel>
+                {items.map((item, i) => (
+                    <SelectItem
+                        label={item.name.slice(0, 15)}
+                        value={item.id}
+                        key={item.id + i + "select-key"}
+                    >
+                        {item.name}
+                    </SelectItem>
+                ))}
             </SelectContent>
         </Select>
     )
 }
-export default function EditSelect({
-    editType,
-}: {
-    editType: "transfer" | "income" | "expense";
-}) {
-    const recordStore = useRecord()
-    const fromSelect = getAccount(
-        recordStore.current.from.id) ?? undefined;
-    const toSelect = getAccount(recordStore.current.to.id) ?? undefined;
 
+export default function EditSelect({
+    record,
+    setRecord
+}: {
+    record: RecordType;
+    setRecord: Dispatch<SetStateAction<RecordType>>;
+}) {
+    const fromSelect = getAccount(record.fromId) ?? undefined;
+    const toSelect = getAccount(record.toId) ?? undefined;
 
     return (
-        <View className=' flex flex-row gap-2 mx-2 justify-center'>
-            {editType == "transfer" ? (
+        <View className='flex flex-row gap-2 mx-2 justify-center'>
+            {record.type == "transfer" ? (
                 <>
-                    <View >
+                    <View>
                         <Text variant={"large"} className='text-black'>From</Text>
                         <MySelect
                             title='From'
                             items={mockAccounts}
                             defaultValue={fromSelect}
-                            field='from'
+                            field='fromId'
+                            setRecord={setRecord}
+                            record={record}
                         />
                     </View>
                     <View>
@@ -113,34 +103,37 @@ export default function EditSelect({
                             title='to'
                             items={mockAccounts}
                             defaultValue={toSelect}
-                            field='to'
+                            field='toId'
+                            setRecord={setRecord}
+                            record={record}
                         />
                     </View>
-
                 </>
             ) : (
                 <>
-                    <View >
+                    <View>
                         <Text variant={"large"} className='text-black'>Account</Text>
                         <MySelect
                             title='account'
                             items={mockAccounts}
-                            defaultValue={editType == "income" ? toSelect : fromSelect}
-                            field={editType == "income" ? "to" : "from"}
+                            defaultValue={record.type == "income" ? toSelect : fromSelect}
+                            field={record.type == "income" ? "toId" : "fromId"}
+                            setRecord={setRecord}
+                            record={record}
                         />
                     </View>
 
                     <View>
-                        <Text
-                            variant={"large"} className='text-black'>Category</Text>
+                        <Text variant={"large"} className='text-black'>Category</Text>
                         <MySelect
                             title='category'
-                            items={mockCategories}
-                            defaultValue={editType == "income" ? fromSelect : toSelect}
-                            field={editType == "income" ? "from" : "to"}
+                            items={mockAccounts}
+                            defaultValue={record.type == "income" ? fromSelect : toSelect}
+                            field={record.type == "income" ? "fromId" : "toId"}
+                            setRecord={setRecord}
+                            record={record}
                         />
                     </View>
-
                 </>
             )}
         </View>

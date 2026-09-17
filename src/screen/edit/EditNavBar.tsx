@@ -1,19 +1,23 @@
 import { Button } from '@/components/ui/button'
-import { useAddRecord, useUpdateRecord } from '@/store/action'
-import { useRecord } from '@/store/record.store'
+import { RecordType } from '@/types'
 import { router } from 'expo-router'
 import { CornerLeftUpIcon, X } from 'lucide-react-native'
 import { useRef } from 'react'
 import { Alert, Text, View } from 'react-native'
 
-export default function EditNavBar() {
-    const record = useRecord()
-    const current = record.current
-    const originalCopy = useRef(record.current)
+interface Props {
+    record: RecordType;
+    // Dispatch<SetStateAction<RecordType>>
+}
+
+export default function EditNavBar({ record }: Props) {
+
+
+    const originalCopy = useRef(record)
 
     function handleSave() {
-        const hasFrom = Boolean(current.from?.id)
-        const hasTo = Boolean(current.to?.id)
+        const hasFrom = Boolean(record.fromId)
+        const hasTo = Boolean(record.toId)
 
         if (!hasFrom || !hasTo) {
             Alert.alert("Missing data", "Choose both sides of the transaction before saving.")
@@ -21,23 +25,23 @@ export default function EditNavBar() {
         }
 
         const nextRecord = {
-            ...current,
-            id: current.id || `rec_${Date.now()}`,
+            ...record,
+            id: record.id || `rec_${Date.now()}`,
         }
 
-        if (current.id) {
-            useUpdateRecord(nextRecord)
+        if (record.id) {
+            // useUpdateRecord(nextRecord)
         } else {
-            useAddRecord(nextRecord)
+            // useAddRecord(nextRecord)
         }
 
         router.back()
     }
 
     function hadnleCancel() {
-        record.updateRecord({
-            ...originalCopy.current
-        })
+        // record.updateRecord({
+        //     ...originalCopy.record
+        // })
         router.back()
     }
 

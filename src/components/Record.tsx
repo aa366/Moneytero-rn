@@ -1,6 +1,5 @@
-import { getAccount } from '@/lib';
+import { formatDate, getAccount } from '@/lib';
 import currency from '@/lib/currency';
-import { useRecord } from '@/store/record.store';
 import { RecordType } from '@/types';
 import { Link } from 'expo-router';
 import { MoveRight, Pen, RefreshCw, Trash, X } from 'lucide-react-native';
@@ -13,7 +12,7 @@ import { Button } from './ui/button';
 export default function Record({
     data
 }: { data: RecordType; }) {
-    const { id, to, from, amount, time, note } = data
+    const { id, toId, fromId, amount, time, note } = data
     const [isDialogOpen, setIsDialogopen] = useState(false)
     const [isDeleteOpen, setIsDeleteopen] = useState(false)
     let uniqueColor = {
@@ -22,16 +21,18 @@ export default function Record({
     }
     let transactionType: "Transfer" | "Category" = "Transfer"
     let isIncome = false
-    const fromAccount = getAccount(from.id)
-    const toAccount = getAccount(to.id)
-    const record = useRecord()
+    const fromAccount = getAccount(fromId)
+    const toAccount = getAccount(toId)
+    console.log(fromId, fromAccount);
+
+
 
 
     if (!fromAccount || !toAccount) {
         throw new Error("account does not exist")
     }
 
-    if (fromAccount.type === "category" || toAccount.type === "category") {
+    if (fromAccount.type != "account" || toAccount.type != "account") {
 
         transactionType = "Category"
 
@@ -54,12 +55,12 @@ export default function Record({
 
 
     function handlePen() {
-        record.updateCurrent({ ...data })
+        // record.updateCurrent({ ...data })
         setIsDialogopen(false)
     }
 
     function handleDelete() {
-        record.removeRecord(id)
+        // record.removeRecord(id)
         setIsDialogopen(false)
         setIsDeleteopen(false)
 
@@ -85,19 +86,25 @@ export default function Record({
 
                             <View className='max-w-[50%] overflow-auto'>
 
-                                <Text className={` text-lg `} numberOfLines={1}>{isIncome ?
-                                    fromAccount.name :
-                                    toAccount.name}
+                                <Text className={` text-lg `} numberOfLines={1}>
+                                    {isIncome ?
+                                        fromAccount.name :
+                                        toAccount.name}
                                 </Text>
 
                                 <View className='flex flex-row items-center gap-1' >
 
                                     <LucideIcon
-                                        name={toAccount.icon}
+                                        name={!isIncome ?
+                                            fromAccount.icon :
+                                            toAccount.icon}
                                         color='gray'
                                     />
                                     <Text className='text-gray-500'>
-                                        {to.name.slice(0, 10)}
+                                        {!isIncome ?
+                                            fromAccount.name.slice(0, 10) :
+                                            toAccount.name.slice(0, 10)
+                                        }
                                     </Text>
 
 
@@ -125,7 +132,7 @@ export default function Record({
                                             color='gray'
                                         />
                                         <Text className='text-gray-500'>
-                                            {from.name.slice(0, 5)}
+                                            {fromAccount.name.slice(0, 5)}
                                         </Text>
                                     </View>
                                     <MoveRight strokeWidth={1.75} color='gray' />
@@ -135,7 +142,7 @@ export default function Record({
                                             color='gray'
                                         />
                                         <Text className='text-gray-500'>
-                                            {to.name.slice(0, 5)}
+                                            {toAccount.name.slice(0, 5)}
                                         </Text>
 
                                     </View>
@@ -155,7 +162,7 @@ export default function Record({
 
             </AlertDialogTrigger>
             {/* Content */}
-            <AlertDialogContent className='rounded-lg border border-white bg-gray-100 p-3 w-full'  >
+            <AlertDialogContent className='rounded-lg bg-gray-100 p-3 w-full'  >
 
                 {/* Head (Colored) */}
                 <AlertDialogHeader
@@ -209,7 +216,7 @@ export default function Record({
                     <Text className='text-4xl font-bold '>{currency.symbol + amount}
                     </Text>
                     <Text className=' mr-auto '>
-                        {time}
+                        {formatDate(time)}
                     </Text>
 
 

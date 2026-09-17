@@ -1,8 +1,8 @@
-import GroupRecords from '@/components/GroupRecords';
 import LucideIcon from '@/components/LucideIcon';
 import { Button } from '@/components/ui/button';
+import { mockAccounts } from '@/constants/mock-data';
 import currency from '@/lib/currency';
-import { useAccountStore } from '@/store/account.store';
+// import { useAccountStore } from '@/store/account.store';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { ScrollView, Text, View } from 'react-native';
@@ -11,8 +11,8 @@ export default function ShowAccount() {
     const router = useRouter();
     const { id } = useLocalSearchParams<{ id?: string | string[] }>();
     const accountId = Array.isArray(id) ? id[0] : id;
-    const accountStore = useAccountStore();
-    const account = accountStore.accounts.find((item) => item.id === accountId) ?? accountStore.accounts[0];
+    // const accountStore = useAccountStore();
+    const account = mockAccounts.find((item) => item.id === accountId) ?? mockAccounts[0];
 
     return (
         <ScrollView className='flex-1 bg-slate-100 p-2'>
@@ -63,7 +63,7 @@ export default function ShowAccount() {
                         <Text className='text-xs text-slate-500'>
                             Transactions {" "}
                         </Text>
-                        <Text className='text-lg font-semibold text-slate-700'>{account.records.length}</Text>
+                        {/* <Text className='text-lg font-semibold text-slate-700'>{account.records.length}</Text> */}
                     </View>
                     {/* balance */}
                     <View className='flex flex-row  items-center' >
@@ -85,7 +85,7 @@ export default function ShowAccount() {
                     className='mb-3 text-xl font-bold text-slate-800'>
                     Recent transactions
                 </Text>
-                <GroupRecords data={account.records} />
+                {/* <GroupRecords data={account.records} /> */}
 
             </View>
 

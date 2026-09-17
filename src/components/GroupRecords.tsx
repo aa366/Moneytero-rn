@@ -67,7 +67,7 @@ export default function GroupRecords({ data, className, children }: Props) {
 
 
     return (
-        <ScrollView className={cn(`  relative  max-h-[70%] min-h-[400px] ${!sortedData.length && "bg-gray-300 rounded-md"}`, className)}>
+        <ScrollView className={cn(`  relative  ${!sortedData.length && "bg-gray-300 rounded-md"}`, className)}>
             {sortedData.length ? (
                 <Items data={sortedData} />
             ) : (

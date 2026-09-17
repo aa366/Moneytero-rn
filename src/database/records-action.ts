@@ -6,9 +6,7 @@ type RecordRow = {
   amount: number;
   type: RecordType["type"];
   fromId: string;
-  fromName: string | null;
   toId: string;
-  toName: string | null;
   time: number;
   note: string | null;
 };
@@ -18,8 +16,8 @@ function mapRecord(row: RecordRow): RecordType {
     id: row.id,
     amount: row.amount,
     type: row.type,
-    from: { id: row.fromId, name: row.fromName ?? row.fromId },
-    to: { id: row.toId, name: row.toName ?? row.toId },
+    fromId: row.fromId,
+    toId: row.toId,
     time: row.time,
     note: row.note ?? "",
   };
@@ -28,44 +26,94 @@ function mapRecord(row: RecordRow): RecordType {
 export async function getAllRecords() {
   const records = await db.getAllAsync<RecordRow>(`
     SELECT
-      records.id,
-      records.amount,
-      records.type,
-      records.fromId,
-      COALESCE(from_account.name, from_category.name) AS fromName,
-      records.toId,
-      COALESCE(to_account.name, to_category.name) AS toName,
-      records.time,
-      records.note
+      id,
+      amount,
+      type,
+      fromId,
+      toId,
+      time,
+      note
     FROM records
-    LEFT JOIN accounts AS from_account ON from_account.id = records.fromId
-    LEFT JOIN categories AS from_category ON from_category.id = records.fromId
-    LEFT JOIN accounts AS to_account ON to_account.id = records.toId
-    LEFT JOIN categories AS to_category ON to_category.id = records.toId
-    ORDER BY records.time DESC
+    ORDER BY time DESC
   `);
 
   return records.map(mapRecord);
 }
+
 export async function getRecordById(id: string) {
-  const record = await db.getFirstAsync<RecordRow>(`
+  const record = await db.getFirstAsync<RecordRow>(
+    `
     SELECT
-      records.id,
-      records.amount,
-      records.type,
-      records.fromId,
-      COALESCE(from_account.name, from_category.name) AS fromName,
-      records.toId,
-      COALESCE(to_account.name, to_category.name) AS toName,
-      records.time,
-      records.note
+      id,
+      amount,
+      type,
+      fromId,
+      toId,
+      time,
+      note
     FROM records
-    LEFT JOIN accounts AS from_account ON from_account.id = records.fromId
-    LEFT JOIN categories AS from_category ON from_category.id = records.fromId
-    LEFT JOIN accounts AS to_account ON to_account.id = records.toId
-    LEFT JOIN categories AS to_category ON to_category.id = records.toId
-    WHERE records.id = ?
-  `, [id]);
+    WHERE id = ?
+  `,
+    [id],
+  );
 
   return record ? mapRecord(record) : null;
+}
+
+export async function createRecord(record: RecordType) {
+  await db.runAsync(
+    `
+      INSERT INTO records (id, amount, type, fromId, toId, time, note)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `,
+    [
+      record.id,
+      record.amount,
+      record.type,
+      record.fromId,
+      record.toId,
+      record.time,
+      record.note ?? "",
+    ],
+  );
+
+  return record;
+}
+
+export async function updateRecord(record: RecordType) {
+  await db.runAsync(
+    `
+      UPDATE records
+      SET amount = ?,
+          type = ?,
+          fromId = ?,
+          toId = ?,
+          time = ?,
+          note = ?
+      WHERE id = ?
+    `,
+    [
+      record.amount,
+      record.type,
+      record.fromId,
+      record.toId,
+      record.time,
+      record.note ?? "",
+      record.id,
+    ],
+  );
+
+  return record;
+}
+
+export async function deleteRecord(id: string) {
+  await db.runAsync(
+    `
+      DELETE FROM records
+      WHERE id = ?
+    `,
+    [id],
+  );
+
+  return true;
 }

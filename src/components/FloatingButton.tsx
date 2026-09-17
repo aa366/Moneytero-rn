@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { EMPTY_RECORD, useRecord } from '@/store/record.store';
+// import { EMPTY_RECORD, useRecord } from '@/store/record.store';
 import { useRouter } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import { Button } from './ui/button';
@@ -9,10 +9,10 @@ interface Props {
 }
 export default function FloatingButton({ className }: Props) {
     const router = useRouter()
-    const record = useRecord()
+    // const record = useRecord()
 
     function handleGo() {
-        record.updateCurrent(EMPTY_RECORD)
+        // record.updateCurrent(EMPTY_RECORD)
         router.navigate("/Edit")
     }
 

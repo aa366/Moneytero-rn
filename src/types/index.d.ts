@@ -2,23 +2,16 @@ export interface RecordType {
   id: string;
   amount: number;
   type: "income" | "expense" | "transfer";
-  from: {
-    name: string;
-    id: string;
-  };
-  to: {
-    name: string;
-    id: string;
-  };
-  time: number | string;
+  fromId: string;
+  toId: string;
+  time: number;
   note?: string;
 }
 export interface AccountType {
-  type: "account" | "category";
+  type: "account" | "income" | "expense" | "joint";
   id: string;
-  icon: NAME;
+  icon: string;
   name: string;
   initValue: number;
   balance: number;
-  records: RecordType[];
 }

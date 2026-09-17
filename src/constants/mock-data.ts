@@ -1,124 +1,139 @@
 import { AccountType, RecordType } from "@/types";
 
+export const mockAccounts: AccountType[] = [
+  // Asset Accounts
+  {
+    id: "acc_checking",
+    type: "account",
+    name: "Main Checking",
+    icon: "CircleEuro",
+    initValue: 5000,
+    balance: 6245.5,
+  },
+  {
+    id: "acc_savings",
+    type: "account",
+    name: "High-Yield Savings",
+    icon: "PiggyBank",
+    initValue: 12000,
+    balance: 12450.0,
+  },
+  {
+    id: "acc_joint",
+    type: "joint",
+    name: "Household Joint",
+    icon: "User",
+    initValue: 1500,
+    balance: 1850.25,
+  },
+
+  // Income Sources
+  {
+    id: "inc_salary",
+    type: "income",
+    name: "Tech Corp Salary",
+    icon: "Briefcase",
+    initValue: 0,
+    balance: 4200.0,
+  },
+  {
+    id: "inc_freelance",
+    type: "income",
+    name: "Freelance Design",
+    icon: "LaptoIdp",
+    initValue: 0,
+    balance: 650.0,
+  },
+
+  // Expense Categories
+  {
+    id: "exp_groceries",
+    type: "expense",
+    name: "Groceries & Food",
+    icon: "ShoppingCart",
+    initValue: 0,
+    balance: 385.75,
+  },
+  {
+    id: "exp_housing",
+    type: "expense",
+    name: "Rent & Utilities",
+    icon: "House",
+    initValue: 0,
+    balance: 1450.0,
+  },
+  {
+    id: "exp_dining",
+    type: "expense",
+    name: "Dining Out & Coffee",
+    icon: "Coffee",
+    initValue: 0,
+    balance: 124.5,
+  },
+];
+
 export const mockRecords: RecordType[] = [
   {
     id: "rec_001",
-    amount: 3200,
+    amount: 4200.0,
     type: "income",
-    from: {
-      id: "cat_income_salary",
-      name: "Tech Corp Inc.",
-    },
-    to: {
-      id: "acc_checking_01",
-      name: "Main Checking",
-    },
-    time: "2026-08-01T09:00:00Z",
-    note: "Monthly Salary",
+    fromId: "inc_salary",
+    toId: "acc_checking",
+    time: 1773043200000, // Example timestamp
+    note: "March first bi-weekly paycheck",
   },
   {
     id: "rec_002",
-    amount: 120.5,
+    amount: 1450.0,
     type: "expense",
-    from: {
-      id: "acc_checking_01",
-      name: "Main Checking",
-    },
-    to: {
-      id: "cat_groceries",
-      name: "Supermarket",
-    },
-    time: "2026-08-03T17:42:00Z",
-    note: "Weekly grocery restock",
+    fromId: "acc_checking",
+    toId: "exp_housing",
+    time: 1773129600000,
+    note: "Monthly apartment rent",
   },
   {
     id: "rec_003",
-    amount: 14.99,
-    type: "expense",
-    from: {
-      id: "acc_credit_01",
-      name: "Sapphire Credit Card",
-    },
-    to: {
-      id: "cat_entertainment",
-      name: "Streaming Subscription",
-    },
-    time: "2026-08-05T12:00:00Z",
-    note: "Monthly streaming service",
+    amount: 500.0,
+    type: "transfer",
+    fromId: "acc_checking",
+    toId: "acc_savings",
+    time: 1773216000000,
+    note: "Scheduled autoIdmated savings",
   },
   {
     id: "rec_004",
-    amount: 500,
+    amount: 154.25,
+    type: "expense",
+    fromId: "acc_checking",
+    toId: "exp_groceries",
+    time: 1773302400000,
+    note: "Weekly market run",
+  },
+  {
+    id: "rec_005",
+    amount: 650.0,
+    type: "income",
+    fromId: "inc_freelance",
+    toId: "acc_checking",
+    time: 1773388800000,
+    note: "Landing page UI project payout",
+  },
+  {
+    id: "rec_006",
+    amount: 300.0,
     type: "transfer",
-    from: {
-      id: "acc_checking_01",
-      name: "Main Checking",
-    },
-    to: {
-      id: "acc_savings_01",
-      name: "High-Yield Savings",
-    },
-    time: "2026-08-06T10:15:00Z",
-    note: "Monthly savings transfer",
-  },
-];
-
-export const mockAccounts: AccountType[] = [
-  {
-    type: "account",
-    id: "acc_checking_01",
-    icon: "Banknote",
-    name: "Main Checking",
-    initValue: 1000.0,
-    balance: 3579.5, // 1000 (init) + 3200 (salary) - 120.50 (groceries) - 500 (savings)
-    records: [mockRecords[0], mockRecords[1], mockRecords[3]],
+    fromId: "acc_checking",
+    toId: "acc_joint",
+    time: 1773475200000,
+    note: "Contribution for monthly shared groceries",
   },
   {
-    type: "account",
-    id: "acc_savings_01",
-    icon: "PiggyBank",
-    name: "High-Yield Savings",
-    initValue: 12500.0,
-    balance: 13000.0, // 12500 (init) + 500 (transfer)
-    records: [mockRecords[3]],
-  },
-  {
-    type: "account",
-    id: "acc_credit_01",
-    icon: "CreditCard",
-    name: "Sapphire Credit Card",
-    initValue: 0.0,
-    balance: -14.99,
-    records: [mockRecords[2]],
-  },
-];
-
-export const mockCategories: AccountType[] = [
-  {
-    type: "category",
-    id: "cat_income_salary",
-    icon: "Briefcase",
-    name: "Salary & Wages",
-    initValue: 0.0,
-    balance: 3200.0,
-    records: [mockRecords[0]],
-  },
-  {
-    type: "category",
-    id: "cat_groceries",
-    icon: "ShoppingCart",
-    name: "Groceries",
-    initValue: 0.0,
-    balance: 120.5,
-    records: [mockRecords[1]],
-  },
-  {
-    type: "category",
-    id: "cat_entertainment",
-    icon: "Tv",
-    name: "Entertainment & Subs",
-    initValue: 0.0,
-    balance: 14.99,
-    records: [mockRecords[2]],
+    id: "rec_007",
+    amount: 42.5,
+    type: "expense",
+    fromId: "acc_checking",
+    toId: "exp_dining",
+    time: 1773561600000,
+    note: "Dinner with coworkers",
   },
 ];
