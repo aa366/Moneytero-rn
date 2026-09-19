@@ -18,7 +18,6 @@ export default function Records() {
         }
         fetchData()
     }, [refreshTick])
-    console.log(data.length);
 
     return (
         <View className='relative h-[96vh] flex flex-col bg-slate-100' >

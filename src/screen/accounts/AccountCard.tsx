@@ -1,24 +1,26 @@
 import currency from '@/lib/currency';
 
 import { deleteAccount } from '@/database/accounts-action';
-import { useAccountRefreshStore } from '@/screen/categories/catagiroiesStoe';
 import { AccountType } from '@/types';
 import { useRouter } from 'expo-router';
-import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react-native';
+import { MoreHorizontal, Trash2 } from 'lucide-react-native';
 import { useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import LucideIcon from '../../components/LucideIcon';
 import { Card } from '../../components/ui/card';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from '../../components/ui/menubar';
+import { useRefresh } from '../refresh';
+import UpdateAccount from './UpdateAccount';
 
 export default function AccountCard({ data }: {
     data: AccountType;
 }) {
 
     const router = useRouter()
-    const triggerRefresh = useAccountRefreshStore((state) => state.triggerRefresh)
+    const triggerRefresh = useRefresh((state) => state.triggerRefresh)
     const [menuValue, setMenuValue] = useState<string | undefined>(undefined)
     const isPositive = data.balance >= 0
+
 
     function handleOpen() {
 
@@ -27,11 +29,6 @@ export default function AccountCard({ data }: {
             pathname: '/ShowAccount',
             params: { id: data.id },
         })
-    }
-
-    function handleEdit() {
-
-        Alert.alert('Edit account', `Editing ${data.name}`)
     }
 
     async function handleDelete() {
@@ -80,11 +77,13 @@ export default function AccountCard({ data }: {
                     <MenubarContent
                         className='bg-white -translate-x-14 flex justify-center items-center min-w-fit '>
                         {/* Edit */}
-                        <MenubarItem onPress={handleEdit} className='active:bg-inherit'>
-                            <View className='flex-row items-center gap-2'>
-                                <Pencil size={14} color='#0f172a' />
-                                <Text>Edit</Text>
-                            </View>
+                        <MenubarItem className='active:bg-inherit'>
+                            {/* update wedget */}
+                            <UpdateAccount
+                                onAccountChanged={triggerRefresh}
+                                data={data}
+                            />
+
 
                         </MenubarItem>
                         {/* Delete */}

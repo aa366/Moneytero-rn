@@ -53,6 +53,48 @@ export async function getAllAccountsUnrestrected() {
   return accounts.map(mapAccount);
 }
 
+export async function recalculateAccountBalances() {
+  await db.runAsync(`
+    UPDATE accounts
+    SET balance = initValue
+  `);
+
+  const records = await db.getAllAsync<{
+    amount: number;
+    fromId: string;
+    toId: string;
+  }>(`
+    SELECT
+      amount,
+      fromId,
+      toId
+    FROM records
+    ORDER BY time ASC
+  `);
+
+  for (const record of records) {
+    await db.runAsync(
+      `
+        UPDATE accounts
+        SET balance = balance - ?
+        WHERE id = ?
+      `,
+      [record.amount, record.fromId],
+    );
+
+    await db.runAsync(
+      `
+        UPDATE accounts
+        SET balance = balance + ?
+        WHERE id = ?
+      `,
+      [record.amount, record.toId],
+    );
+  }
+
+  return true;
+}
+
 export async function getAccountById(id: string) {
   const account = await db.getFirstAsync<AccountRow>(
     `

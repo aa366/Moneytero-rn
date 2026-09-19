@@ -2,70 +2,69 @@ import {
     AlertDialog,
     AlertDialogCancel,
     AlertDialogContent,
-    AlertDialogTrigger,
+    AlertDialogTrigger
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
 import { ACCOUNT_ICONS } from '@/constants/icons'
-import { createAccount } from '@/database/accounts-action'
+import { recalculateAccountBalances, updateAccount } from '@/database/accounts-action'
 
 import { AccountType } from '@/types'
-import { Plus } from 'lucide-react-native'
+import { Pencil } from 'lucide-react-native'
 import { useState } from 'react'
 import { Alert, ScrollView, View } from 'react-native'
-import { useRefresh } from '../refresh'
 
 
 interface Props {
-
+    onAccountChanged: () => void;
+    data: AccountType;
 }
-export default function AddAccount({ }: Props) {
+export default function UpdateAccount({
+    onAccountChanged,
+    data
+}: Props) {
     // const accountStore = useAccountStore()
-    const refresh = useRefresh(s => s.triggerRefresh)
     const [isOpen, setIsOpen] = useState(false)
-    const [name, setName] = useState('')
-    const [balance, setBalance] = useState('')
-    const [selectedIcon, setSelectedIcon] = useState('Wallet')
+
+    const [name, setName] = useState(data.name)
+    const [balance, setBalance] = useState(data.initValue)
+    const [selectedIcon, setSelectedIcon] = useState(data.icon)
 
     async function handleSubmit() {
-
-        if (!name || !balance || !selectedIcon) {
+        if (!name || !selectedIcon) {
             Alert.alert("Error", "Please Fill the account information before submit it ")
             return
         }
 
         const newAccount: AccountType = {
-            id: `acc_${Date.now()}`,
+            ...data,
             name: name,
-            balance: Number(balance),
             icon: selectedIcon,
             initValue: Number(balance),
-            type: "account",
-
         }
-        await createAccount(newAccount)
-        refresh()
+        await updateAccount(newAccount)
+        await recalculateAccountBalances()
+        await onAccountChanged()
         // accountStore.addAccount(newAccount)
-        setName("")
-        setBalance("")
-        setSelectedIcon("Wallet")
+
         setIsOpen(false)
     }
 
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+
             <AlertDialogTrigger asChild>
                 <Button
                     onPress={() => setIsOpen(true)}
-                    className='mx-auto my-3 w-[80%]'
-                    variant={'outline'}
-                >
-                    <Text>Add New Account</Text>
-                    <Plus size={24} color={'white'} />
+                    className='flex-row items-center gap-2'>
+                    <Pencil size={14} color='#0f172a' />
+                    <Text>Edit</Text>
                 </Button>
             </AlertDialogTrigger>
+
             {/* Content */}
+
             <AlertDialogContent className='bg-slate-500'>
                 {/* Name */}
                 <View>
@@ -75,12 +74,12 @@ export default function AddAccount({ }: Props) {
                 {/* Intial */}
                 <View>
                     <Text>Initial balance</Text>
-                    <Input value={balance} onChangeText={setBalance} keyboardType='numeric' />
+                    <Input value={balance.toString()} onChangeText={(e: string) => setBalance(Number(e))} keyboardType='numeric' />
                 </View>
                 {/* Icon */}
                 <View>
                     <Text>Icon</Text>
-                    <ScrollView className='h-[200px]'>
+                    <ScrollView className='h-[120px]'>
                         <View className='flex flex-wrap flex-row  gap-2'>
                             {ACCOUNT_ICONS.map(({ name, Icon }) => {
                                 const isSelected = selectedIcon === name

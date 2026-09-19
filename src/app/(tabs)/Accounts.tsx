@@ -1,6 +1,7 @@
 import TopBar from '@/components/layout/TopBar'
 import { getAllAccounts } from '@/database/accounts-action'
 import AccountCard from '@/screen/accounts/AccountCard'
+import AddAccount from '@/screen/accounts/AddAccount'
 // import AddAccount from '@/screen/accounts/AddAccount'
 import Overall from '@/screen/analysis/Overall'
 import { useRefresh } from '@/screen/refresh'
@@ -11,6 +12,7 @@ import { ScrollView, Text, View } from 'react-native'
 
 export default function Accounts() {
     const [data, setData] = useState<AccountType[]>([])
+
     const refreshTick = useRefresh((state) => state.refreshTick)
 
     useEffect(() => {
@@ -28,7 +30,7 @@ export default function Accounts() {
 
                 <Overall />
                 {/* Add Button */}
-                {/* <AddAccount  /> */}
+                <AddAccount />
                 {/* Title */}
                 <Text
                     className='text-2xl font-bold text-slate-800 mb-3 px-2 '>
