@@ -2,13 +2,14 @@ import { formatDate } from '@/lib';
 import { cn } from '@/lib/utils';
 import { RecordType } from '@/types';
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
-import Record from './Record';
+import { ScrollView, ScrollViewProps, Text, View } from 'react-native';
+import Record from './RecordCard';
 import { Separator } from './ui/separator';
 
 interface Props {
     data: RecordType[];
     children?: React.ReactNode;
+    contentContainerStyle?: ScrollViewProps["contentContainerStyle"];
     className?: string;
 }
 
@@ -51,7 +52,7 @@ function Items({ data }: { data: RecordType[][] }) {
     })
 }
 
-export default function GroupRecords({ data, className, children }: Props) {
+export default function GroupRecords({ data, className, children, contentContainerStyle }: Props) {
 
 
     const groupedByTime = data.reduce((acc, item) => {
@@ -67,9 +68,12 @@ export default function GroupRecords({ data, className, children }: Props) {
 
 
     return (
-        <ScrollView className={cn(`  relative  ${!sortedData.length && "bg-gray-300 rounded-md"}`, className)}>
+        <ScrollView className={cn(`  relative  ${!sortedData.length && "bg-gray-300 rounded-md"}`, className)} contentContainerStyle={contentContainerStyle}>
             {sortedData.length ? (
+
                 <Items data={sortedData} />
+
+
             ) : (
                 <NoTransaction />
             )

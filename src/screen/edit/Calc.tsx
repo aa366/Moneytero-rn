@@ -2,7 +2,7 @@ import LucideIcon from '@/components/LucideIcon';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { RecordType } from '@/types';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Alert, View } from 'react-native';
 
 const calcOBJ = [
@@ -18,20 +18,26 @@ interface Props {
 }
 
 export default function Calc({ record, setRecord }: Props) {
-    const [screenValue, setScreenValue] = useState(() =>
-        record.amount ? String(record.amount) : "",
+    const [screenValue, setScreenValue] = useState(record.amount.toString()
     )
 
     function handleCalcInput(value: string) {
-        if (value === "=") {
-            const safeAmount = Number(screenValue) || 0
-            setRecord((current) => ({ ...current, amount: safeAmount }))
-            return
-        }
-
         if (screenValue.length >= 10) {
             Alert.alert("Error", "Be careful you exceeded the highest number allowed (10). Please enter a valid value.")
             return
+        }
+
+        if (value === "=") {
+            try {
+                const safeAmount = eval(screenValue) || 0
+                setScreenValue(safeAmount.toString())
+                setRecord((current) => ({ ...current, amount: safeAmount }))
+                return
+            } catch (error) {
+                Alert.alert("Error", `Please be careful experssion can be not calclauted`)
+                return
+            }
+
         }
 
         const nextValue = screenValue + value
@@ -39,6 +45,9 @@ export default function Calc({ record, setRecord }: Props) {
         setRecord((current) => ({ ...current, amount: Number(nextValue) || 0 }))
     }
 
+    useEffect(() => {
+        setScreenValue(record.amount.toString())
+    }, [record.amount])
     return (
         <>
             <View>

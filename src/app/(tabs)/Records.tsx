@@ -29,7 +29,7 @@ export default function Records() {
                 <RangeSelect />
             </View>
             {/* <Record data={mockRecords[0]} /> */}
-            <GroupRecords data={mockRecords} className='' />
+            <GroupRecords data={mockRecords} className=' relative pb-[70px] ' contentContainerStyle={{ paddingBottom: 50 }} />
             <FloatingButton className=' absolute bottom-10 right-5 size-14' />
 
         </View>

@@ -11,9 +11,12 @@ interface Props {
 }
 
 export default function TimeControl({ record, setRecord }: Props) {
-    const [date, setDate] = useState(new Date(record.time || Date.now()))
+
+
+
     const [mode, setMode] = useState<'date' | 'time'>('date')
     const [show, setShow] = useState(false)
+
 
     function showMode(currentMode: "date" | "time") {
         setMode(currentMode)
@@ -24,7 +27,6 @@ export default function TimeControl({ record, setRecord }: Props) {
         setShow(false)
         if (!newDate) return
 
-        setDate(newDate)
         setRecord((current) => ({
             ...current,
             time: newDate.getTime(),
@@ -37,20 +39,20 @@ export default function TimeControl({ record, setRecord }: Props) {
                 onPress={() => showMode("date")}
                 variant={"outline"}>
                 <Text>
-                    Date: {formatDate(date).toString()}
+                    Date: {formatDate(record.time).toString()}
                 </Text>
             </Button>
 
             <Button
                 onPress={() => showMode("time")}
                 variant={"outline"}>
-                <Text>Time: {formatTime(date)}</Text>
+                <Text>Time: {formatTime(record.time)}</Text>
             </Button>
 
             {show && (
                 <DateTimePicker
                     testID='datetimepicker'
-                    value={date}
+                    value={new Date(record.time)}
                     mode={mode}
                     onChange={handleChange}
                 />

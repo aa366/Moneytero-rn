@@ -23,7 +23,7 @@ export default function Record({
     let isIncome = false
     const fromAccount = getAccount(fromId)
     const toAccount = getAccount(toId)
-    console.log(fromId, fromAccount);
+
 
 
 
@@ -173,7 +173,8 @@ export default function Record({
                         <View className='flex flex-row gap-5'>
                             {/* Pen */}
                             <Link
-                                href={"/Edit"}
+                                href={{ pathname: "/Edit", params: { id: id } }}
+
                                 className='bg-blue-400 p-1 '
                                 onPress={handlePen}
                             >

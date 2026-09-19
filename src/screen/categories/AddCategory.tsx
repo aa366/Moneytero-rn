@@ -7,21 +7,24 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
+import { ToggleGroup, ToggleGroupIcon, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { ACCOUNT_ICONS } from '@/constants/icons';
-import { useCategoryStore } from '@/store/category.store';
+import { createAccount } from '@/database/accounts-action';
 import { AccountType } from '@/types';
 import { Plus } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, ScrollView, View } from 'react-native';
 
 export default function AddCategory() {
-    const categoryStore = useCategoryStore();
+
     const [isOpen, setIsOpen] = useState(false);
+
     const [name, setName] = useState('');
     const [balance, setBalance] = useState('');
     const [selectedIcon, setSelectedIcon] = useState('Wallet');
+    const [ctype, setCType] = useState<string>("income")
 
-    function handleSubmit() {
+    async function handleSubmit() {
         if (!name || !balance || !selectedIcon) {
             Alert.alert('Error', 'Please fill the category information before submit');
             return;
@@ -33,17 +36,25 @@ export default function AddCategory() {
             icon: selectedIcon as any,
             id: Date.now().toString(),
             initValue: Number(balance),
-            type: 'category',
-            records: [],
+            type: ctype,
+
         };
 
-        categoryStore.addCategory(newCategory);
+        // categoryStore.addCategory(newCategory);
+
+        await createAccount(newCategory)
+
         setName('');
         setBalance('');
         setSelectedIcon('Wallet');
         setIsOpen(false);
     }
 
+    function handlecType(val: string) {
+        console.log(val);
+        setCType(val)
+
+    }
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
             <AlertDialogTrigger asChild>
@@ -54,16 +65,43 @@ export default function AddCategory() {
             </AlertDialogTrigger>
 
             <AlertDialogContent className='bg-slate-500'>
+                {/* Name */}
                 <View>
                     <Text>Name</Text>
                     <Input value={name} onChangeText={setName} />
                 </View>
-
+                {/* balance */}
                 <View>
                     <Text>Initial balance</Text>
                     <Input value={balance} onChangeText={setBalance} keyboardType='numeric' />
                 </View>
+                <ToggleGroup
 
+                    type='single'
+                    value={ctype}
+                    onValueChange={handlecType}
+                >
+                    <ToggleGroupItem
+                        isFirst
+                        value='income'
+                        aria-label='toggle account type' >
+                        <ToggleGroupIcon as={Plus} />
+                    </ToggleGroupItem>
+                    <ToggleGroupItem
+                        value='expense'
+                        aria-label='toggle account type' >
+                        <ToggleGroupIcon as={Plus} />
+                    </ToggleGroupItem>
+                    <ToggleGroupItem
+                        value='joint'
+                        aria-label='toggle account type' >
+                        <ToggleGroupIcon as={Plus} />
+                    </ToggleGroupItem>
+
+
+
+                </ToggleGroup>
+                {/* icon */}
                 <View>
                     <Text>Icon</Text>
                     <ScrollView className='h-[120px]'>

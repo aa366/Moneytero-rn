@@ -8,38 +8,42 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Text } from '@/components/ui/text'
 import { ACCOUNT_ICONS } from '@/constants/icons'
-import { useAccountStore } from '@/store/account.store'
+import { createAccount } from '@/database/accounts-action'
+
 import { AccountType } from '@/types'
 import { Plus } from 'lucide-react-native'
 import { useState } from 'react'
 import { Alert, ScrollView, View } from 'react-native'
 
 
-
-export default function AddAccount() {
-    const accountStore = useAccountStore()
+interface Props {
+    onAccountChanged: () => Promise<void>
+}
+export default function AddAccount({ onAccountChanged }: Props) {
+    // const accountStore = useAccountStore()
     const [isOpen, setIsOpen] = useState(false)
     const [name, setName] = useState('')
     const [balance, setBalance] = useState('')
     const [selectedIcon, setSelectedIcon] = useState('Wallet')
 
-    function handleSubmit() {
+    async function handleSubmit() {
         if (!name || !balance || !selectedIcon) {
             Alert.alert("Error", "Please Fill the account information before submit it ")
             return
         }
 
         const newAccount: AccountType = {
+            id: `acc_${Date.now()}`,
             name: name,
             balance: Number(balance),
             icon: selectedIcon,
-            id: Date.now().toString(),
             initValue: Number(balance),
             type: "account",
-            records: []
-        }
 
-        accountStore.addAccount(newAccount)
+        }
+        await createAccount(newAccount)
+        await onAccountChanged()
+        // accountStore.addAccount(newAccount)
         setName("")
         setBalance("")
         setSelectedIcon("Wallet")

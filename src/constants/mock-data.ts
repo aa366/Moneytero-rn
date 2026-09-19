@@ -40,7 +40,7 @@ export const mockAccounts: AccountType[] = [
     id: "inc_freelance",
     type: "income",
     name: "Freelance Design",
-    icon: "LaptoIdp",
+    icon: "Laptop",
     initValue: 0,
     balance: 650.0,
   },

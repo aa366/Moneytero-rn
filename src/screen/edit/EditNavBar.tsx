@@ -31,8 +31,11 @@ export default function EditNavBar({ record }: Props) {
 
         if (record.id) {
             // useUpdateRecord(nextRecord)
+            console.log("update:", nextRecord);
+
         } else {
             // useAddRecord(nextRecord)
+            console.log("create:", nextRecord);
         }
 
         router.back()
