@@ -1,6 +1,7 @@
 import currency from '@/lib/currency';
 
 import { deleteAccount } from '@/database/accounts-action';
+import { useAccountRefreshStore } from '@/screen/categories/catagiroiesStoe';
 import { AccountType } from '@/types';
 import { useRouter } from 'expo-router';
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react-native';
@@ -10,12 +11,12 @@ import LucideIcon from '../../components/LucideIcon';
 import { Card } from '../../components/ui/card';
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarSeparator, MenubarTrigger } from '../../components/ui/menubar';
 
-export default function AccountCard({ data, onAccountChanged }: {
+export default function AccountCard({ data }: {
     data: AccountType;
-    onAccountChanged: () => Promise<void>;
 }) {
 
     const router = useRouter()
+    const triggerRefresh = useAccountRefreshStore((state) => state.triggerRefresh)
     const [menuValue, setMenuValue] = useState<string | undefined>(undefined)
     const isPositive = data.balance >= 0
 
@@ -35,7 +36,7 @@ export default function AccountCard({ data, onAccountChanged }: {
 
     async function handleDelete() {
         await deleteAccount(data.id)
-        await onAccountChanged()
+        await triggerRefresh()
     }
 
     return (

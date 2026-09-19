@@ -31,6 +31,22 @@ export async function getAllAccounts() {
       initValue,
       balance
     FROM accounts
+    WHERE deleted = 0
+    ORDER BY type, name ASC
+  `);
+
+  return accounts.map(mapAccount);
+}
+export async function getAllAccountsUnrestrected() {
+  const accounts = await db.getAllAsync<AccountRow>(`
+    SELECT
+      id,
+      type,
+      icon,
+      name,
+      initValue,
+      balance
+    FROM accounts
     ORDER BY type, name ASC
   `);
 
@@ -48,7 +64,7 @@ export async function getAccountById(id: string) {
         initValue,
         balance
       FROM accounts
-      WHERE id = ?
+      WHERE id = ? AND deleted = 0
     `,
     [id],
   );
@@ -59,8 +75,8 @@ export async function getAccountById(id: string) {
 export async function createAccount(account: AccountType) {
   await db.runAsync(
     `
-      INSERT INTO accounts (id, type, icon, name, initValue, balance)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO accounts (id, type, icon, name, initValue, balance, deleted)
+      VALUES (?, ?, ?, ?, ?, ?, 0)
     `,
     [
       account.id,
@@ -102,7 +118,8 @@ export async function updateAccount(account: AccountType) {
 export async function deleteAccount(id: string) {
   await db.runAsync(
     `
-      DELETE FROM accounts
+      UPDATE accounts
+      SET deleted = 1
       WHERE id = ?
     `,
     [id],

@@ -2,12 +2,12 @@ import { Button } from '@/components/ui/button'
 import { formatDate, formatTime } from '@/lib'
 import { RecordType } from '@/types'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { useState } from 'react'
 import { Text, View } from 'react-native'
 
 interface Props {
     record: RecordType;
-    setRecord: Dispatch<SetStateAction<RecordType>>;
+    setRecord: (t: RecordType) => void;
 }
 
 export default function TimeControl({ record, setRecord }: Props) {
@@ -27,10 +27,10 @@ export default function TimeControl({ record, setRecord }: Props) {
         setShow(false)
         if (!newDate) return
 
-        setRecord((current) => ({
-            ...current,
+        setRecord({
+            ...record,
             time: newDate.getTime(),
-        }))
+        })
     }
 
     return (

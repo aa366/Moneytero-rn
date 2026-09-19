@@ -2,7 +2,7 @@ import LucideIcon from '@/components/LucideIcon';
 import { Button } from '@/components/ui/button';
 import { Text } from '@/components/ui/text';
 import { RecordType } from '@/types';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, View } from 'react-native';
 
 const calcOBJ = [
@@ -14,12 +14,11 @@ const calcOBJ = [
 
 interface Props {
     record: RecordType;
-    setRecord: Dispatch<SetStateAction<RecordType>>;
+    setRecord: (t: RecordType) => void;
 }
 
 export default function Calc({ record, setRecord }: Props) {
-    const [screenValue, setScreenValue] = useState(record.amount.toString()
-    )
+    const [screenValue, setScreenValue] = useState("")
 
     function handleCalcInput(value: string) {
         if (screenValue.length >= 10) {
@@ -31,7 +30,7 @@ export default function Calc({ record, setRecord }: Props) {
             try {
                 const safeAmount = eval(screenValue) || 0
                 setScreenValue(safeAmount.toString())
-                setRecord((current) => ({ ...current, amount: safeAmount }))
+                setRecord({ ...record, amount: safeAmount })
                 return
             } catch (error) {
                 Alert.alert("Error", `Please be careful experssion can be not calclauted`)
@@ -42,12 +41,16 @@ export default function Calc({ record, setRecord }: Props) {
 
         const nextValue = screenValue + value
         setScreenValue(nextValue)
-        setRecord((current) => ({ ...current, amount: Number(nextValue) || 0 }))
+        if (["/", "*", "-", "+"].includes(value)) {
+            return
+        }
+        setRecord({ ...record, amount: Number(nextValue) || 0 })
     }
 
     useEffect(() => {
-        setScreenValue(record.amount.toString())
-    }, [record.amount])
+        setScreenValue(record.amount === 0 ? "" : record.amount.toString())
+    }, [record.id])
+
     return (
         <>
             <View>
@@ -68,7 +71,7 @@ export default function Calc({ record, setRecord }: Props) {
                     className='absolute -right-3 top-1/2 -translate-y-1/2'
                     onPress={() => {
                         setScreenValue("")
-                        setRecord((current) => ({ ...current, amount: 0 }))
+                        setRecord({ ...record, amount: 0 })
                     }}>
                     <LucideIcon name='Delete' size={45} className='' color={"red"} />
                 </Button>

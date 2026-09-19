@@ -1,11 +1,10 @@
-import { Textarea } from '@/components/ui/textarea'
-import { RecordType } from '@/types'
-import { Dispatch, SetStateAction } from 'react'
-import { View } from 'react-native'
+import { Textarea } from '@/components/ui/textarea';
+import { RecordType } from '@/types';
+import { View } from 'react-native';
 
 interface Props {
     record: RecordType;
-    setRecord: Dispatch<SetStateAction<RecordType>>;
+    setRecord: (t: RecordType) => void;
 }
 
 export default function EditNote({ record, setRecord }: Props) {
@@ -14,7 +13,7 @@ export default function EditNote({ record, setRecord }: Props) {
             <Textarea
                 placeholder='Add notes'
                 value={record.note ?? ''}
-                onChangeText={(note) => setRecord((current) => ({ ...current, note }))}
+                onChangeText={(note) => setRecord({ ...record, note })}
                 className='h-[120px]'
             />
         </View>

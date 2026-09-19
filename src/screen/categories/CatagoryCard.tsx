@@ -1,4 +1,5 @@
 import { deleteAccount } from '@/database/accounts-action';
+import { useAccountRefreshStore } from '@/screen/categories/catagiroiesStoe';
 import { AccountType } from '@/types';
 import { useRouter } from 'expo-router';
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react-native';
@@ -15,8 +16,11 @@ import {
     MenubarTrigger
 } from '../../components/ui/menubar';
 
-export default function CategoryCard({ data }: { data: AccountType }) {
+export default function CatagoryCard({ data }: {
+    data: AccountType;
+}) {
     const router = useRouter();
+    const triggerRefresh = useAccountRefreshStore((state) => state.triggerRefresh);
     const [menuValue, setMenuValue] = useState<string | undefined>(undefined);
     // const isPositive = data.balance >= 0;
 
@@ -33,6 +37,7 @@ export default function CategoryCard({ data }: { data: AccountType }) {
 
     async function handleDelete() {
         await deleteAccount(data.id)
+        triggerRefresh()
     }
 
     return (

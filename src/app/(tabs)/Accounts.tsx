@@ -1,34 +1,34 @@
 import TopBar from '@/components/layout/TopBar'
 import { getAllAccounts } from '@/database/accounts-action'
 import AccountCard from '@/screen/accounts/AccountCard'
-import AddAccount from '@/screen/accounts/AddAccount'
 // import AddAccount from '@/screen/accounts/AddAccount'
 import Overall from '@/screen/analysis/Overall'
+import { useRefresh } from '@/screen/refresh'
 import { AccountType } from '@/types'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { ScrollView, Text, View } from 'react-native'
 
 export default function Accounts() {
     const [data, setData] = useState<AccountType[]>([])
-
-    const refreshAccounts = useCallback(async () => {
-        const accs = await getAllAccounts();
-        setData(accs);
-    }, []);
+    const refreshTick = useRefresh((state) => state.refreshTick)
 
     useEffect(() => {
-        refreshAccounts();
-    }, [refreshAccounts]);
+        const h = async () => {
+            const accs = await getAllAccounts();
+            setData(accs);
+        };
+        h()
+    }, [refreshTick]);
 
     return (
         <>
             <TopBar />
-            <ScrollView className='flex-1 bg-slate-100 px-2 py-3'>
+            <ScrollView contentContainerStyle={{ paddingBottom: 20 }} className='flex-1 bg-slate-100 px-2 py-3'>
 
                 <Overall />
                 {/* Add Button */}
-                <AddAccount onAccountChanged={refreshAccounts} />
+                {/* <AddAccount  /> */}
                 {/* Title */}
                 <Text
                     className='text-2xl font-bold text-slate-800 mb-3 px-2 '>
@@ -37,7 +37,7 @@ export default function Accounts() {
                 {/* Accounts */}
                 <View>
                     {data.filter((item) => item.type == "account").map((account) => (
-                        <AccountCard key={account.id} data={account} onAccountChanged={refreshAccounts} />
+                        <AccountCard key={account.id} data={account} />
                     ))}
                 </View>
             </ScrollView>

@@ -1,6 +1,8 @@
-import { formatDate, getAccount } from '@/lib';
+import { deleteRecord } from '@/database/records-action';
+import { formatDate } from '@/lib';
 import currency from '@/lib/currency';
-import { RecordType } from '@/types';
+import { useRefresh } from '@/screen/refresh';
+import { AccountType, RecordType } from '@/types';
 import { Link } from 'expo-router';
 import { MoveRight, Pen, RefreshCw, Trash, X } from 'lucide-react-native';
 import { useState } from 'react';
@@ -10,9 +12,11 @@ import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTrigger 
 import { Button } from './ui/button';
 
 export default function Record({
-    data
-}: { data: RecordType; }) {
+    data,
+    accounts
+}: { data: RecordType; accounts: AccountType[] }) {
     const { id, toId, fromId, amount, time, note } = data
+    const triggerRefresh = useRefresh(s => s.triggerRefresh)
     const [isDialogOpen, setIsDialogopen] = useState(false)
     const [isDeleteOpen, setIsDeleteopen] = useState(false)
     let uniqueColor = {
@@ -21,14 +25,15 @@ export default function Record({
     }
     let transactionType: "Transfer" | "Category" = "Transfer"
     let isIncome = false
-    const fromAccount = getAccount(fromId)
-    const toAccount = getAccount(toId)
-
-
-
-
+    const fromAccount = accounts.find((item) => item.id === fromId);
+    const toAccount = accounts.find((item) => item.id === toId);
 
     if (!fromAccount || !toAccount) {
+
+        // console.log(element.name, element.id);
+        console.log(toAccount, toId);
+        console.log(fromAccount, fromId);
+
         throw new Error("account does not exist")
     }
 
@@ -59,8 +64,9 @@ export default function Record({
         setIsDialogopen(false)
     }
 
-    function handleDelete() {
-        // record.removeRecord(id)
+    async function handleDelete() {
+        await deleteRecord(id)
+        triggerRefresh()
         setIsDialogopen(false)
         setIsDeleteopen(false)
 

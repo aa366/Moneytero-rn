@@ -1,19 +1,32 @@
 import LucideIcon from '@/components/LucideIcon';
 import { Button } from '@/components/ui/button';
-import { mockAccounts } from '@/constants/mock-data';
+import { EMPTY_ACCOUNT } from '@/constants/empty';
+import { getAccountById } from '@/database/accounts-action';
 import currency from '@/lib/currency';
+import { AccountType } from '@/types';
 // import { useAccountStore } from '@/store/account.store';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
+import { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 
 export default function ShowAccount() {
     const router = useRouter();
-    const { id } = useLocalSearchParams<{ id?: string | string[] }>();
-    const accountId = Array.isArray(id) ? id[0] : id;
+    const { id } = useLocalSearchParams<{ id: string }>();
     // const accountStore = useAccountStore();
-    const account = mockAccounts.find((item) => item.id === accountId) ?? mockAccounts[0];
+    const [account, setAccount] = useState<AccountType>(EMPTY_ACCOUNT)
 
+    useEffect(() => {
+        const h = async () => {
+            const d = await getAccountById(id)
+            if (d) {
+                setAccount(d)
+            } else {
+                router.back()
+            }
+
+        }
+    }, [])
     return (
         <ScrollView className='flex-1 bg-slate-100 p-2'>
             {/* Nav */}

@@ -1,10 +1,3 @@
-import { mockAccounts } from "@/constants/mock-data";
-
-export function getAccount(id: string) {
-  const account = mockAccounts.find((item) => item.id === id);
-  return account ?? null;
-}
-
 export function formatDate(date: Date | number) {
   if (typeof date === "number") {
     date = new Date(date);

@@ -14,4 +14,5 @@ export interface AccountType {
   name: string;
   initValue: number;
   balance: number;
+  deleted?: boolean;
 }

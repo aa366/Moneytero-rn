@@ -10,32 +10,35 @@ import { Text } from '@/components/ui/text';
 import { ToggleGroup, ToggleGroupIcon, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { ACCOUNT_ICONS } from '@/constants/icons';
 import { createAccount } from '@/database/accounts-action';
+import { useAccountRefreshStore } from '@/screen/categories/catagiroiesStoe';
 import { AccountType } from '@/types';
-import { Plus } from 'lucide-react-native';
+import { Asterisk, Minus, Plus } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, ScrollView, View } from 'react-native';
 
-export default function AddCategory() {
+interface Props {
+
+}
+export default function AddCategory({ }: Props) {
 
     const [isOpen, setIsOpen] = useState(false);
 
     const [name, setName] = useState('');
-    const [balance, setBalance] = useState('');
     const [selectedIcon, setSelectedIcon] = useState('Wallet');
-    const [ctype, setCType] = useState<string>("income")
+    const [ctype, setCType] = useState<AccountType["type"]>("income")
 
     async function handleSubmit() {
-        if (!name || !balance || !selectedIcon) {
+        if (!name || !selectedIcon) {
             Alert.alert('Error', 'Please fill the category information before submit');
             return;
         }
 
         const newCategory: AccountType = {
             name,
-            balance: Number(balance),
+            balance: 0,
             icon: selectedIcon as any,
-            id: Date.now().toString(),
-            initValue: Number(balance),
+            id: `cata_${Date.now()}`,
+            initValue: 0,
             type: ctype,
 
         };
@@ -43,17 +46,18 @@ export default function AddCategory() {
         // categoryStore.addCategory(newCategory);
 
         await createAccount(newCategory)
+        useAccountRefreshStore.getState().triggerRefresh()
 
         setName('');
-        setBalance('');
         setSelectedIcon('Wallet');
         setIsOpen(false);
     }
 
-    function handlecType(val: string) {
-        console.log(val);
-        setCType(val)
+    function handlecType(val: string | undefined) {
+        if (val == "income" || val == "expense" || val == "joint") {
 
+            setCType(val)
+        }
     }
     return (
         <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -70,32 +74,34 @@ export default function AddCategory() {
                     <Text>Name</Text>
                     <Input value={name} onChangeText={setName} />
                 </View>
-                {/* balance */}
-                <View>
-                    <Text>Initial balance</Text>
-                    <Input value={balance} onChangeText={setBalance} keyboardType='numeric' />
-                </View>
+                {/* type */}
                 <ToggleGroup
 
                     type='single'
                     value={ctype}
                     onValueChange={handlecType}
+                    className='justify-between rounded-lg'
                 >
                     <ToggleGroupItem
                         isFirst
                         value='income'
-                        aria-label='toggle account type' >
+                        aria-label='toggle account type'
+                        className='  '>
                         <ToggleGroupIcon as={Plus} />
+                        <Text>income</Text>
                     </ToggleGroupItem>
                     <ToggleGroupItem
                         value='expense'
                         aria-label='toggle account type' >
-                        <ToggleGroupIcon as={Plus} />
+                        <ToggleGroupIcon as={Minus} />
+                        <Text>Expense</Text>
                     </ToggleGroupItem>
                     <ToggleGroupItem
                         value='joint'
-                        aria-label='toggle account type' >
-                        <ToggleGroupIcon as={Plus} />
+                        aria-label='toggle account type'
+                        className='rounded-r-lg'>
+                        <ToggleGroupIcon as={Asterisk} size={32} />
+                        <Text>Joint</Text>
                     </ToggleGroupItem>
 
 

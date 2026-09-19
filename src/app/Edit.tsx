@@ -1,5 +1,4 @@
 import { EMPTY_RECORD } from '@/constants/empty';
-import { mockRecords } from '@/constants/mock-data';
 import { getRecordById } from '@/database/records-action';
 import Calc from '@/screen/edit/Calc';
 import EditNavBar from '@/screen/edit/EditNavBar';
@@ -15,7 +14,7 @@ import { View } from 'react-native';
 export default function Edit() {
     const { id } = useLocalSearchParams<{ id: string; }>()
 
-    const [record, setRecord] = useState<RecordType>(EMPTY_RECORD)
+    const [record, setRecord] = useState<RecordType>({ ...EMPTY_RECORD, time: Date.now() })
 
     useEffect(() => {
         const h = async () => {
@@ -24,14 +23,13 @@ export default function Edit() {
             }
 
             const dbRecord = await getRecordById(id)
-            const mock = mockRecords.find((i) => i.id === id)
-            // console.log(dbRecord, "-".repeat(40), mock);
 
-            setRecord(mock ?? dbRecord ?? EMPTY_RECORD)
+            setRecord(dbRecord ?? EMPTY_RECORD)
 
         }
+
         h()
-    }, [])
+    }, [id])
 
     return (
         <View className='bg-gray-200 min-h-full p-1 gap-2'>

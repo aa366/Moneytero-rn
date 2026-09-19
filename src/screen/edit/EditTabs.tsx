@@ -1,12 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { RecordType } from '@/types';
-import { Dispatch, SetStateAction } from 'react';
 import { Text, View } from 'react-native';
 
 interface Props {
     record: RecordType;
-    setRecord: Dispatch<SetStateAction<RecordType>>;
+    setRecord: (t: RecordType) => void;
 }
 export default function EditTabs({
     record,

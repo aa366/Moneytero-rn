@@ -7,41 +7,44 @@ import {
     SelectValue
 } from '@/components/ui/select';
 import { Text } from '@/components/ui/text';
-import { mockAccounts } from '@/constants/mock-data';
-import { getAccount } from '@/lib';
+import { getAllAccounts } from '@/database/accounts-action';
 import { AccountType, RecordType } from '@/types';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 
 interface Props {
     title: string;
-    items: AccountType[];
     defaultValue?: AccountType;
     field: "fromId" | "toId";
     record: RecordType;
-    setRecord: Dispatch<SetStateAction<RecordType>>;
+    setRecord: (t: RecordType) => void;
+    accounts: AccountType[];
 }
 
 function MySelect({
     title = "account",
-    items = mockAccounts,
     defaultValue,
     field,
     record,
-    setRecord
+    setRecord,
+    accounts
 }: Props) {
-    const [item, setItem] = useState<AccountType | undefined>();
+    const [item, setItem] = useState<AccountType | undefined>(defaultValue);
     const selectedValue = item ?? defaultValue;
 
+    useEffect(() => {
+        setItem(defaultValue)
+    }, [defaultValue?.id])
+
     function handleValueChange(option: { value: string; label: string; } | undefined) {
-        const selectedItem = items.find((item) => item.id === option?.value);
+        const selectedItem = accounts.find((item) => item.id === option?.value);
         if (!selectedItem) return;
 
         setItem(selectedItem)
-        setRecord((current) => ({
-            ...current,
+        setRecord({
+            ...record,
             [field]: selectedItem.id,
-        }))
+        })
     }
 
     return (
@@ -58,7 +61,7 @@ function MySelect({
 
             <SelectContent className='w-[180px]'>
                 <SelectLabel>{title}</SelectLabel>
-                {items.map((item, i) => (
+                {accounts.map((item, i) => (
                     <SelectItem
                         label={item.name.slice(0, 15)}
                         value={item.id}
@@ -77,10 +80,20 @@ export default function EditSelect({
     setRecord
 }: {
     record: RecordType;
-    setRecord: Dispatch<SetStateAction<RecordType>>;
+    setRecord: (t: RecordType) => void;
 }) {
-    const fromSelect = getAccount(record.fromId) ?? undefined;
-    const toSelect = getAccount(record.toId) ?? undefined;
+    const [accounts, setAccounts] = useState<AccountType[]>([])
+
+    const fromSelect = accounts.find((item) => item.id === record.fromId);
+    const toSelect = accounts.find((item) => item.id === record.toId);
+
+    useEffect(() => {
+        const h = async () => {
+            const data = await getAllAccounts()
+            setAccounts(data)
+        }
+        h()
+    }, [])
 
     return (
         <View className='flex flex-row gap-2 mx-2 justify-center'>
@@ -90,22 +103,24 @@ export default function EditSelect({
                         <Text variant={"large"} className='text-black'>From</Text>
                         <MySelect
                             title='From'
-                            items={mockAccounts}
+
                             defaultValue={fromSelect}
                             field='fromId'
                             setRecord={setRecord}
                             record={record}
+                            accounts={accounts.filter((i) => i.type == "account")}
                         />
                     </View>
                     <View>
                         <Text variant={"large"} className='text-black'>To</Text>
                         <MySelect
                             title='to'
-                            items={mockAccounts}
+
                             defaultValue={toSelect}
                             field='toId'
                             setRecord={setRecord}
                             record={record}
+                            accounts={accounts.filter((i) => i.type == "account")}
                         />
                     </View>
                 </>
@@ -115,11 +130,12 @@ export default function EditSelect({
                         <Text variant={"large"} className='text-black'>Account</Text>
                         <MySelect
                             title='account'
-                            items={mockAccounts}
+
                             defaultValue={record.type == "income" ? toSelect : fromSelect}
                             field={record.type == "income" ? "toId" : "fromId"}
                             setRecord={setRecord}
                             record={record}
+                            accounts={accounts.filter((i) => i.type == "account")}
                         />
                     </View>
 
@@ -127,11 +143,14 @@ export default function EditSelect({
                         <Text variant={"large"} className='text-black'>Category</Text>
                         <MySelect
                             title='category'
-                            items={mockAccounts}
+
                             defaultValue={record.type == "income" ? fromSelect : toSelect}
                             field={record.type == "income" ? "fromId" : "toId"}
                             setRecord={setRecord}
                             record={record}
+                            accounts={record.type == "income" ? accounts.filter((i) => i.type != "account" && i.type != "expense")
+                                :
+                                accounts.filter((i) => i.type != "account" && i.type != "income")}
                         />
                     </View>
                 </>

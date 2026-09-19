@@ -78,7 +78,7 @@ function Text({
   const Component = asChild ? Slot : RNText;
   return (
     <Component
-      className={cn(textVariants({ variant }), textClass, className)}
+      className={cn("text-black", textVariants({ variant }), textClass, className)}
       role={variant ? ROLE[variant] : undefined}
       aria-level={variant ? ARIA_LEVEL[variant] : undefined}
       {...props}
@@ -87,3 +87,4 @@ function Text({
 }
 
 export { Text, TextClassContext };
+

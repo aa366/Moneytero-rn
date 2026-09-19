@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button'
+import { createRecord, updateRecord } from '@/database/records-action'
 import { RecordType } from '@/types'
 import { router } from 'expo-router'
 import { CornerLeftUpIcon, X } from 'lucide-react-native'
-import { useRef } from 'react'
 import { Alert, Text, View } from 'react-native'
+import { useRefresh } from '../refresh'
 
 interface Props {
     record: RecordType;
@@ -11,11 +12,10 @@ interface Props {
 }
 
 export default function EditNavBar({ record }: Props) {
+    const refresh = useRefresh(s => s.triggerRefresh)
+    async function handleSave() {
 
 
-    const originalCopy = useRef(record)
-
-    function handleSave() {
         const hasFrom = Boolean(record.fromId)
         const hasTo = Boolean(record.toId)
 
@@ -24,27 +24,22 @@ export default function EditNavBar({ record }: Props) {
             return
         }
 
-        const nextRecord = {
+        const nextRecord: RecordType = {
             ...record,
             id: record.id || `rec_${Date.now()}`,
         }
 
         if (record.id) {
-            // useUpdateRecord(nextRecord)
-            console.log("update:", nextRecord);
-
+            await updateRecord(nextRecord)
         } else {
-            // useAddRecord(nextRecord)
-            console.log("create:", nextRecord);
+            await createRecord(nextRecord)
         }
-
+        await refresh()
+        console.log(nextRecord);
         router.back()
     }
 
     function hadnleCancel() {
-        // record.updateRecord({
-        //     ...originalCopy.record
-        // })
         router.back()
     }
 
